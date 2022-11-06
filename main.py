@@ -21,6 +21,11 @@ def get_images_urls (url, keyword):
             break
     return url_list
 
-
-
-
+def download_one_image (url, path, num):
+    if not os.path.isdir(path):
+        os.mkdir(path)
+    img = requests.get(url)
+    file = os.path.join(f"{path}/{str(num).zfill(4).jpg}")
+    save = open(file, "wb")
+    save.write(img.content)
+    save.close()
