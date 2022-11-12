@@ -8,12 +8,12 @@ URL = "https://yandex.ru/images/"
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"}
 
 
-def is_valid(url_page: str, img_url: str) -> str:
-    if img_url:
-        parsed = urlparse(img_url)
-        if bool(parsed.netloc) and bool(parsed.scheme):
-            img_url = urljoin(url_page, img_url)
-            return img_url
+def is_valid(url: str) -> bool:
+    '''
+    Функция, проверяющая наличие ссылки на файл в указанном атрибуте (источника)
+    '''
+    parsed = urlparse(url)
+    if bool(parsed.netloc) and bool(parsed.scheme):
 
 
 def get_images_urls(url: str, keyword: str, headers: dict, count=1000) -> list:
@@ -28,10 +28,11 @@ def get_images_urls(url: str, keyword: str, headers: dict, count=1000) -> list:
         soup = BeautifulSoup(html_page.content, "html.parser")
         for img in soup.find_all("img"):
             img_url = img.attrs.get("src")
-            if is_valid(url_page, img_url):
-                url_list.append(img_url)
-            else:
+            if not img_url:
                 continue
+            img_url = urljoin(url_page, img_url)
+            if is_valid(img_url):
+                url_list.append(img_url)
         page += 1
         if len(url_list) > count:
             break
