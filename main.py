@@ -12,8 +12,11 @@ def is_valid(url: str) -> bool:
     '''
     Функция, проверяющая наличие ссылки на файл в указанном атрибуте (источника)
     '''
-    parsed = urlparse(url)
-    if bool(parsed.netloc) and bool(parsed.scheme):
+    if not url:
+        return False
+    else:
+        parsed = urlparse(url)
+        return bool(parsed.netloc) and bool(parsed.scheme)
 
 
 def get_images_urls(url: str, keyword: str, headers: dict, count=1000) -> list:
@@ -28,11 +31,12 @@ def get_images_urls(url: str, keyword: str, headers: dict, count=1000) -> list:
         soup = BeautifulSoup(html_page.content, "html.parser")
         for img in soup.find_all("img"):
             img_url = img.attrs.get("src")
-            if not img_url:
-                continue
-            img_url = urljoin(url_page, img_url)
             if is_valid(img_url):
-                url_list.append(img_url)
+                img_url = urljoin(url_page, img_url)
+                if is_valid(img_url):
+                    url_list.append(img_url)
+            else:
+                continue
         page += 1
         if len(url_list) > count:
             break
@@ -43,6 +47,7 @@ def download_one_image(url: str, path: str, num: int) -> None:
     '''
     Функция скачивает и сохраняет одно изображение
     '''
+    path = os.path.join("dataset", path)
     if not os.path.isdir(path):
         try:
             os.mkdir(path)
@@ -53,7 +58,6 @@ def download_one_image(url: str, path: str, num: int) -> None:
     file = os.path.join(path, file_name)
     with open(file, "wb") as save:
         save.write(img.content)
-        save.close()
 
 
 def accounting_for_downloads(url: str, keyword: str, headers: dict) -> int:
@@ -68,18 +72,16 @@ def accounting_for_downloads(url: str, keyword: str, headers: dict) -> int:
     return num
 
 
-def image_download(url: str, path: str, keywords: list, headers: dict) -> None:
+def image_download(url: str, keywords: list, headers: dict) -> None:
     '''
     Функция вызывающая остальные функции и оповещающая о том, по какому запросу произодится парсинг
     и сколько изображений было скачано по итогу
     '''
-    os.chdir(path)
     if not os.path.isdir("dataset"):
         try:
             os.mkdir("dataset")
         except PermissionError:
             print("Insufficient permissions to create a directory on the specified path")
-    os.chdir("dataset")
     for i in range(len(keywords)):
         print(keywords[i])
         amount = accounting_for_downloads(url, keywords[i], headers)
@@ -87,6 +89,5 @@ def image_download(url: str, path: str, keywords: list, headers: dict) -> None:
 
 
 if __name__ == "__main__":
-    path = "C:/Users/user/Desktop"
     keywords = ["polar bear", "brown bear"]
-    image_download(URL, path, keywords, HEADERS)
+    image_download(URL, keywords, HEADERS)
