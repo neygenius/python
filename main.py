@@ -1,4 +1,5 @@
 import os
+import sys
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
@@ -53,6 +54,7 @@ def download_one_image(url: str, path: str, num: int) -> None:
             os.mkdir(path)
         except PermissionError:
             print("Insufficient permissions to create a directory on the specified path")
+            print("Error: ", sys.exc_info()[0])
     img = requests.get(url)
     file_name = f"{str(num).zfill(4)}.jpg"
     file = os.path.join(path, file_name)
@@ -82,6 +84,7 @@ def image_download(url: str, keywords: list, headers: dict) -> None:
             os.mkdir("dataset")
         except PermissionError:
             print("Insufficient permissions to create a directory on the specified path")
+            print("Error: ", sys.exc_info()[0])
     for i in range(len(keywords)):
         print(keywords[i])
         amount = accounting_for_downloads(url, keywords[i], headers)
