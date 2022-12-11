@@ -2,19 +2,18 @@ import os
 import re
 
 
-def next_element(element_path: str) -> str:
+def next_file(path: str) -> str:
     """
-    Принимает на вход путь к файлу и возвращает путь к следующему после него файлу. Если файла не существует,
-    возвращается сообщение об отсутствии файла. Если это последний файл, возвращается None
-    :param element_path: Путь к файлу
+    Принимает на вход путь к файлу - возвращает путь к следующему после него файлу
+    :param path: Путь к файлу
     """
-    if os.path.isfile(element_path):
-        class_path, element = os.path.split(element_path)
-        index = re.search(r'\d{4}', element)
-        clear_index = int(index.group(0))
-        clear_index += 1
-        if clear_index < 1000:
-            next_element = os.path.join(class_path, re.sub(r'\d{4}', f'{clear_index:04d}', element))
+    if os.path.isfile(path):
+        keyword_path, file_name = os.path.split(path)
+        number = re.search(r'\d{4}', file_name)
+        img_num = int(number.group(0))
+        img_num += 1
+        if img_num < 1000:
+            next_element = os.path.join(keyword_path, re.sub(r'\d{4}', f'{img_num:04d}', file_name))
             return next_element
         else:
             return None
@@ -23,4 +22,4 @@ def next_element(element_path: str) -> str:
 
 
 if __name__ == "__main__":
-    print(next_element("dataset\\polar bear\\0000.jpg"))
+    print(next_file("dataset\\polar bear\\0000.jpg"))

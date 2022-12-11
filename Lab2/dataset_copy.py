@@ -1,13 +1,13 @@
 import os
 import shutil
 import main
-from main import Annotation
+from main import AnnotationFile
 
 
 def create_dataset(directory: str) -> None:
     """
-    Создание нового Датасета и проверка его существования
-    :param directory: Название директории
+    Создание нового dataset и проверка его существования
+    :param directory: Директория
     """
     try:
         if not os.path.isdir(directory):
@@ -19,25 +19,21 @@ def create_dataset(directory: str) -> None:
         print(f"Error: {err}")
 
 
-def copy_element(obj: type(Annotation), count: int, index: int) -> None:
+def copy_img(obj: type(AnnotationFile), number: int) -> None:
     """
-    Переносит элемент из dataset в dataset1, меняет его название и добавляет в новую аннотацию
+    Копирует изображение из dataset в dataset1, меняет его название и добавляет в новую аннотацию
     :param obj: Объект класса Annotation
-    :param count: Число вхождений. Необходимо, чтобы постоянно не записывалась строка: "Absolute path,
-    Relative path, Class name"
-    :param index: Индекс изображения.
+    :param number: Номер изображения
     """
-    shutil.copy(os.path.join("dataset", obj.class_name, f"{index:04d}.jpg"), obj.directory)
-    os.rename(os.path.join(obj.directory, f"{index:04d}.jpg"),
-              os.path.join(obj.directory, f"{obj.class_name}_{index:04d}.jpg"))
-    obj.add(os.path.abspath(obj.directory), f"{obj.class_name}_{index:04d}.jpg", count)
+    shutil.copy(os.path.join("dataset", obj.class_name, f"{number:04d}.jpg"), obj.directory)
+    os.rename(os.path.join(obj.directory, f"{number:04d}.jpg"),
+              os.path.join(obj.directory, f"{obj.class_name}_{number:04d}.jpg"))
+    obj.add(os.path.abspath(obj.directory), f"{obj.class_name}_{number:04d}.jpg")
 
 
 if __name__ == "__main__":
-    count = 0
     create_dataset("dataset1")
     main.check_file("dataset1")
-    for class_name in main.CLASSES:
-        for index in range(999):
-            copy_element(Annotation("dataset1", class_name), count, index)
-            count += 1
+    for keyword in main.KEYWORDS:
+        for number in range(999):
+            copy_img(AnnotationFile("dataset1", keyword), number)
