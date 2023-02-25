@@ -1,7 +1,7 @@
 import next
 
 
-class Iterator:
+class FileIterator:
     def __init__(self, path: str) -> None:
         """
         :param path: Путь к файлу
@@ -17,5 +17,5 @@ class Iterator:
 
 
 if __name__ == "__main__":
-    obj = Iterator("dataset\\polar_bear\\0000.jpg")
+    obj = FileIterator("dataset\\polar_bear\\0000.jpg")
     print(obj.__next__())
