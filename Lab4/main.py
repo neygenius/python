@@ -1,5 +1,8 @@
 import pandas as pd
-import csv
+from csv import Sniffer
+import cv2
+
+KEYWORDS = ["polar bear", "brown bear"]
 
 
 def check_header(file_name: str) -> str:
@@ -8,7 +11,7 @@ def check_header(file_name: str) -> str:
     :param file_name: Название файла аннотации
     """
     with open(file_name, "rb") as csv_file:
-        sniffer = csv.Sniffer()
+        sniffer = Sniffer()
         has_header = sniffer.has_header(csv_file.read(2048))
         csv_file.seek(0)
     if not has_header:
@@ -28,7 +31,28 @@ def create_dataframe(file_name: str) -> pd.DataFrame:
     """
     actual_name = check_header(file_name)
     df = pd.read_csv(actual_name, usecols=["Абсолютный путь", "Название класса"])
-    df = df.rename(columns={"Абсолютный путь": "abs_path", "Название класса": "class_name"})
+    df = df.rename(columns={"Абсолютный путь": "absolute_path", "Название класса": "class_name"})
     return df
+
+
+def add_columns(df: pd.DataFrame) -> None:
+    """
+    Добавляет в датафрейм столбцы: метка класса, высота, ширина и глубина цвета изображения
+    :param df: Датафрейм
+    """
+    width = []
+    height = []
+    color_depth = []
+    mark = (df.class_name != KEYWORDS[0])
+    df["class_label"] = mark.astype(int)
+    for path in df["absolute_path"]:
+        image = cv2.imread(path)
+        image_height, image_width, image_depth = image.shape
+        height.append(image_height)
+        width.append(image_width)
+        color_depth.append(image_depth)
+    df["height"] = height
+    df["width"] = width
+    df["depth"] = color_depth
 
 
