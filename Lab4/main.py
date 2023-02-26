@@ -1,5 +1,6 @@
 import pandas as pd
 from csv import Sniffer
+import numpy as np
 import cv2
 
 KEYWORDS = ["polar bear", "brown bear"]
@@ -40,11 +41,11 @@ def add_columns(df: pd.DataFrame) -> None:
     Добавляет в датафрейм столбцы: метка класса, высота, ширина и глубина цвета изображения
     :param df: Датафрейм
     """
-    width = []
     height = []
+    width = []
     color_depth = []
     mark = (df.class_name != KEYWORDS[0])
-    df["class_label"] = mark.astype(int)
+    df["class_mark"] = mark.astype(int)
     for path in df["absolute_path"]:
         image = cv2.imread(path)
         image_height, image_width, image_depth = image.shape
@@ -56,3 +57,21 @@ def add_columns(df: pd.DataFrame) -> None:
     df["depth"] = color_depth
 
 
+def mark_filter(df: pd.DataFrame, mark: str) -> pd.DataFrame:
+    """
+    Фильтрует датафрейма по метке класса
+    :param df: Датафрейм
+    :param mark: Метка класса
+    """
+    return df[df.class_mark == mark]
+
+
+def mark_and_max_filter(df: pd.DataFrame, mark: str, max_height: int, max_width: int) -> pd.DataFrame:
+    """
+    Фильтрует датафрейма по метке класса, максимальной высоте и ширине изображения
+    :param df: Датафрейм
+    :param mark: Метка класса
+    :param max_height: Максимальное значение высоты изображения
+    :param max_width: Максимальное значение ширины изображения
+    """
+    return df[((df.class_mark == mark) & (df.height <= max_height) & (df.width <= max_width))]
