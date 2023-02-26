@@ -14,3 +14,8 @@ class FileIterator:
         """
         self.path = next.next_file(self.path)
         return self.path
+
+
+if __name__ == "__main__":
+    obj = FileIterator("dataset\\polar_bear\\0000.jpg")
+    print(obj.__next__())
