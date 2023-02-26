@@ -40,8 +40,8 @@ if __name__ == "__main__":
     pbar = tqdm(total=2000)
     for keyword in main.KEYWORDS:
         for number in range(1000):
-            random_copy_img(AnnotationFile("dataset2", keyword), number,
-                            RAND_DICT.get(number + flag), "dataset")
+            random_copy_img(AnnotationFile("dataset2", keyword), "dataset", number,
+                            RAND_DICT.get(number + flag))
             counter += 1
             pbar.update(1)
         flag = 1000

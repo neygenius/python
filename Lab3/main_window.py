@@ -8,9 +8,15 @@ from main import check_file, KEYWORDS, AnnotationFile
 from random_dataset_copy import random_copy_img, RAND_DICT
 from Iterator import FileIterator
 
+
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super(MainWindow, self).__init__()
+        self.counter_one = 0
+        self.counter_two = 0
+        self.folder = ""
+        self.path_one = ""
+        self.path_two = ""
         self.init_ui()
 
     def init_ui(self) -> None:
@@ -24,8 +30,6 @@ class MainWindow(QMainWindow):
         src.setFixedSize(300, 50)
         src.move(5, 0)
 
-        self.counter_one = 0
-        self.counter_two = 0
         self.path_one = self.get_zero_path(KEYWORDS[0])
         self.path_two = self.get_zero_path(KEYWORDS[1])
 

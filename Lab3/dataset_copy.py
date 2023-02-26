@@ -51,7 +51,7 @@ if __name__ == "__main__":
     pbar = tqdm(total=2000)
     for keyword in main.KEYWORDS:
         for number in range(1000):
-            copy_img(AnnotationFile("dataset1", keyword), number, "dataset")
+            copy_img(AnnotationFile("dataset1", keyword), "dataset", number)
             counter += 1
             pbar.update(1)
     logging.debug(f"{counter} lines were added to the annotation file")
