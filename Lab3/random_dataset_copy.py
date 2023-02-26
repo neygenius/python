@@ -1,11 +1,8 @@
 import os
 import shutil
-import main
 import random
 import logging
-from tqdm import tqdm
 from main import AnnotationFile
-import dataset_copy
 
 file_log = logging.FileHandler("lab2.log")
 console_out = logging.StreamHandler()
@@ -31,18 +28,3 @@ def random_copy_img(obj: type(AnnotationFile), origin_folder: str, number: int, 
                   f"to <{rand_number:05d}.jpg>")
     abs_path = os.path.abspath(os.path.join(obj.directory, f"{rand_number:05d}.jpg"))
     obj.add(abs_path, f"{rand_number:05d}.jpg")
-
-
-if __name__ == "__main__":
-    dataset_copy.create_dataset("dataset2")
-    main.check_file("dataset2")
-    counter, flag = 0, 0
-    pbar = tqdm(total=2000)
-    for keyword in main.KEYWORDS:
-        for number in range(1000):
-            random_copy_img(AnnotationFile("dataset2", keyword), "dataset", number,
-                            RAND_DICT.get(number + flag))
-            counter += 1
-            pbar.update(1)
-        flag = 1000
-    logging.debug(f"{counter} lines were added to the annotation file")

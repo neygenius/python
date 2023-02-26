@@ -1,7 +1,6 @@
 import csv
 import os
 import logging
-from tqdm import tqdm
 
 file_log = logging.FileHandler("lab2.log")
 console_out = logging.StreamHandler()
@@ -44,17 +43,3 @@ class AnnotationFile:
             writer.writerow([abs_path, os.path.join(self.directory, img_name), self.class_name])
             self.row_number += 1
         logging.debug(f"Line about file <{img_name}> has been added to the annotation file")
-
-
-if __name__ == "__main__":
-    check_file("dataset")
-    counter = 0
-    pbar = tqdm(total=2000)
-    for keyword in KEYWORDS:
-        obj = AnnotationFile("dataset", keyword)
-        for number in range(1000):
-            abs_path = os.path.abspath(os.path.join("dataset", keyword, f"{number:04d}.jpg"))
-            obj.add(abs_path, os.path.join(keyword, f"{number:04d}.jpg"))
-            counter += 1
-            pbar.update(1)
-    logging.debug(f"{counter} lines were added to the annotation file")

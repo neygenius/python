@@ -1,8 +1,6 @@
 import os
 import shutil
-import main
 import logging
-from tqdm import tqdm
 from main import AnnotationFile
 
 file_log = logging.FileHandler("lab2.log")
@@ -42,16 +40,3 @@ def copy_img(obj: type(AnnotationFile), origin_folder: str, number: int) -> None
                   f"to <{obj.class_name}_{number:04d}.jpg>")
     abs_path = os.path.abspath(os.path.join(obj.directory, f"{obj.class_name}_{number:04d}.jpg"))
     obj.add(abs_path, f"{obj.class_name}_{number:04d}.jpg")
-
-
-if __name__ == "__main__":
-    create_dataset("dataset1")
-    main.check_file("dataset1")
-    counter = 0
-    pbar = tqdm(total=2000)
-    for keyword in main.KEYWORDS:
-        for number in range(1000):
-            copy_img(AnnotationFile("dataset1", keyword), "dataset", number)
-            counter += 1
-            pbar.update(1)
-    logging.debug(f"{counter} lines were added to the annotation file")
