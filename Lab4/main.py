@@ -43,7 +43,7 @@ def add_columns(df: pd.DataFrame) -> None:
     """
     height = []
     width = []
-    color_depth = []
+    depth = []
     mark = (df.class_name != KEYWORDS[0])
     df["class_mark"] = mark.astype(int)
     for path in df["absolute_path"]:
@@ -51,10 +51,10 @@ def add_columns(df: pd.DataFrame) -> None:
         image_height, image_width, image_depth = image.shape
         height.append(image_height)
         width.append(image_width)
-        color_depth.append(image_depth)
+        depth.append(image_depth)
     df["height"] = height
     df["width"] = width
-    df["depth"] = color_depth
+    df["depth"] = depth
 
 
 def mark_filter(df: pd.DataFrame, mark: str) -> pd.DataFrame:
@@ -75,3 +75,11 @@ def mark_and_max_filter(df: pd.DataFrame, mark: str, max_height: int, max_width:
     :param max_width: Максимальное значение ширины изображения
     """
     return df[((df.class_mark == mark) & (df.height <= max_height) & (df.width <= max_width))]
+
+def grouping(df: pd.DataFrame) -> tuple:
+    """
+    Группирует датафрейм по максимальному, минимальному и среднему количеству пикселей, а также фильтрует по метке класса
+    :param df: Датафрейм.
+    """
+    df["pixel_count"] = df["height"] * df["width"] * df["depth"]
+    return df.groupby("class_mark").max(), df.groupby("class_mark").min(), df.groupby("class_mark").mean()
