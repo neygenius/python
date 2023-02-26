@@ -15,6 +15,8 @@ def next_file(path: str) -> str:
         if img_num < 1000:
             next_element = os.path.join(keyword_path, re.sub(r'\d{4}', f'{img_num:04d}', file_name))
             return next_element
+        else:
+            return
     else:
         return "File doesn't exist"
 
