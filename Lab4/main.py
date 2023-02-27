@@ -1,6 +1,7 @@
 import pandas as pd
 from csv import Sniffer
 import numpy as np
+from matplotlib import pyplot as plt
 import cv2
 
 KEYWORDS = ["polar bear", "brown bear"]
@@ -76,10 +77,43 @@ def mark_and_max_filter(df: pd.DataFrame, mark: str, max_height: int, max_width:
     """
     return df[((df.class_mark == mark) & (df.height <= max_height) & (df.width <= max_width))]
 
+
 def grouping(df: pd.DataFrame) -> tuple:
     """
     Группирует датафрейм по максимальному, минимальному и среднему количеству пикселей, а также фильтрует по метке класса
-    :param df: Датафрейм.
+    :param df: Датафрейм
     """
     df["pixel_count"] = df["height"] * df["width"] * df["depth"]
     return df.groupby("class_mark").max(), df.groupby("class_mark").min(), df.groupby("class_mark").mean()
+
+
+def histogram(df: pd.DataFrame, mark: str) -> list:
+    """
+    Строит гистограмму по датафрейму и метке класса
+    :param df: Датафрейм
+    :param mark: Метка класса
+    """
+    df = mark_filter(df, mark)
+    path = np.random.choice(df.absolute_path.to_numpy())
+    image = cv2.imread(path)
+    return [cv2.calcHist([image], [0], None, [255], [0, 255]),
+            cv2.calcHist([image], [1], None, [255], [0, 255]),
+            cv2.calcHist([image], [2], None, [255], [0, 255])]
+
+
+def histogram_drawing(df: pd.DataFrame, mark: str) -> None:
+    """
+    Отрисовывает гистограмму
+    :param df: Датафрейм
+    :param mark: Метка класса
+    """
+    histograms = histogram(df, mark)
+    plt.title("Histogram")
+    plt.ylabel("Number of pixel")
+    plt.xlabel("Intensity value")
+    plt.xlim([0, 255])
+    plt.plot(histograms[0], "b")
+    plt.plot(histograms[1], "g")
+    plt.plot(histograms[2], "r")
+    plt.show()
+
