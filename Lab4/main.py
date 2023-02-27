@@ -58,7 +58,7 @@ def add_columns(df: pd.DataFrame) -> None:
     df["depth"] = depth
 
 
-def mark_filter(df: pd.DataFrame, mark: str) -> pd.DataFrame:
+def mark_filter(df: pd.DataFrame, mark: int) -> pd.DataFrame:
     """
     Фильтрует датафрейма по метке класса
     :param df: Датафрейм
@@ -67,7 +67,7 @@ def mark_filter(df: pd.DataFrame, mark: str) -> pd.DataFrame:
     return df[df.class_mark == mark]
 
 
-def mark_and_max_filter(df: pd.DataFrame, mark: str, max_height: int, max_width: int) -> pd.DataFrame:
+def mark_and_max_filter(df: pd.DataFrame, mark: int, max_height: int, max_width: int) -> pd.DataFrame:
     """
     Фильтрует датафрейма по метке класса, максимальной высоте и ширине изображения
     :param df: Датафрейм
@@ -87,7 +87,7 @@ def grouping(df: pd.DataFrame) -> tuple:
     return df.groupby("class_mark").max(), df.groupby("class_mark").min(), df.groupby("class_mark").mean()
 
 
-def histogram(df: pd.DataFrame, mark: str) -> list:
+def histogram(df: pd.DataFrame, mark: int) -> list:
     """
     Строит гистограмму по датафрейму и метке класса
     :param df: Датафрейм
@@ -101,7 +101,7 @@ def histogram(df: pd.DataFrame, mark: str) -> list:
             cv2.calcHist([image], [2], None, [255], [0, 255])]
 
 
-def histogram_drawing(df: pd.DataFrame, mark: str) -> None:
+def histogram_drawing(df: pd.DataFrame, mark: int) -> None:
     """
     Отрисовывает гистограмму
     :param df: Датафрейм
@@ -117,3 +117,10 @@ def histogram_drawing(df: pd.DataFrame, mark: str) -> None:
     plt.plot(histograms[2], "r")
     plt.show()
 
+
+if __name__ == "__main__":
+    test = create_dataframe("annotation.csv")
+    test.to_csv("DataFrame")
+    mark_filter(test, 1).to_csv("DataFrame_1")
+    mark_and_max_filter(test, 1, 310, 500).to_csv("DataFrame_2")
+    histogram_drawing(test, 0)
