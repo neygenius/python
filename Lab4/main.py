@@ -9,7 +9,7 @@ KEYWORDS = ["polar bear", "brown bear"]
 
 def check_header(file_name: str) -> str:
     """
-    Проверяет наличие загаловка у файла аннотации, добавлет его по необходимости
+    Проверяет наличие заголовка у файла аннотации, добавлет его по необходимости
     :param file_name: Название файла аннотации
     """
     with open(file_name, "rb") as csv_file:
@@ -19,7 +19,7 @@ def check_header(file_name: str) -> str:
     if not has_header:
         df = pd.read_csv(file_name)
         header_list = ["Абсолютный путь", "Относительный путь", "Название класса"]
-        new_name = "annotation.csv"
+        new_name = "new_annotation.csv"
         df.to_csv(new_name, header=header_list, index=False)
         return new_name
     else:
@@ -96,9 +96,10 @@ def histogram(df: pd.DataFrame, mark: int) -> list:
     df = mark_filter(df, mark)
     path = np.random.choice(df.absolute_path.to_numpy())
     image = cv2.imread(path)
-    return [cv2.calcHist([image], [0], None, [255], [0, 255]),
-            cv2.calcHist([image], [1], None, [255], [0, 255]),
-            cv2.calcHist([image], [2], None, [255], [0, 255])]
+    height, width, depth = image.shape
+    return [cv2.calcHist([image], [0], None, [255], [0, 255]) / (height * width),
+            cv2.calcHist([image], [1], None, [255], [0, 255]) / (height * width),
+            cv2.calcHist([image], [2], None, [255], [0, 255]) / (height * width)]
 
 
 def histogram_drawing(df: pd.DataFrame, mark: int) -> None:
